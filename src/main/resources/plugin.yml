@@ -6,3 +6,6 @@ description: Filabdict
 commands:
   get_combat:
     description: Получить лог урона
+    permission: combat_log
+  combat_page:
+    description: Перелестнуть на страницу

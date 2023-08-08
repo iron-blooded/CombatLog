@@ -55,13 +55,21 @@ public class getCombat implements CommandExecutor {
             commandSender.sendMessage(ChatColor.RED+"Меньше время укажи!");
             return true;
         }
-        commandSender.sendMessage(ChatColor.AQUA+""+ChatColor.BOLD+"╔═════════Yog-Sothoth═════════╗");
+//        commandSender.sendMessage(ChatColor.AQUA+""+ChatColor.BOLD+"╔═════════Yog-Sothoth═════════╗");
+        List<TextComponent> messages = forDisplay.getLastCombat((Player) commandSender, plugin, time);
+        double size = messages.size();
+        size = size/10;
+        size = Math.ceil(size);
+        if (messages.size() > 10) {
+            messages.removeAll(messages.subList(11, messages.size()));
+        }
+        new decorationMessageLog(messages, 1, (int) size);
         if (time > 0){
-            for (TextComponent message: forDisplay.getLastCombat((Player) commandSender, plugin, time)) {
+            for (TextComponent message: messages) {
                 commandSender.sendMessage(message);
             }
         }
-        commandSender.sendMessage(ChatColor.AQUA+""+ChatColor.BOLD+"╚═════════Yog-Sothoth═════════╝");
+        /// ... здесь список должен быть
         return true;
     }
 

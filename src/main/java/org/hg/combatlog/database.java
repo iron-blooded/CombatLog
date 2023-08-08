@@ -90,7 +90,7 @@ public class database {
                 decompressedPlayer attacker = compPlayerToDecompressed(resultSet.getObject("attacker"));
                 double damage = resultSet.getDouble("damage");
                 CombatLine line = new CombatLine(time, victim, attacker, damage);
-                combatLines.add(line);
+                combatLines.add(0, line);
             }
 
             resultSet.close();
@@ -118,7 +118,7 @@ public class database {
                 double damage = resultSet.getDouble("damage");
                 if (victim != null && victim.location.distance(location) <= radius) {
                     CombatLine line = new CombatLine(time, victim, attacker, damage);
-                    combatLines.add(line);
+                    combatLines.add(0, line);
                 }
             }
 
@@ -147,7 +147,7 @@ public class database {
                 double damage = resultSet.getDouble("damage");
                 if (attacker != null && attacker.location.distance(location) <= radius) {
                     CombatLine line = new CombatLine(time, victim, attacker, damage);
-                    combatLines.add(line);
+                    combatLines.add(0, line);
                 }
             }
 

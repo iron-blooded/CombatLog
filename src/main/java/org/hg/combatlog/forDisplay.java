@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.hg.combatlog.CombatLog.historyCommand;
 
 public class forDisplay {
     public static List<TextComponent> getLastCombat(Player player, CombatLog plugin ,int time){
@@ -26,14 +27,15 @@ public class forDisplay {
         for (database.CombatLine log: plugin.log.getLinesLastSeconds(time)){
             messages.add(forDisplay.generateLine(log.time, log.victim, log.attacker, log.damage));
         }
-        if (messages.size() > 10) {
-            messages.removeAll(messages.subList(11, messages.size()));
-        }
+        new historyCommand().add(player.getName(), messages);
+//        if (messages.size() > 10) {
+//            messages.removeAll(messages.subList(11, messages.size()));
+//        }
         return messages;
     }
     private static TextComponent generateLine(long time, PlayerSerializer.decompressedPlayer victim, PlayerSerializer.decompressedPlayer attacker, double damage){
         TextComponent message = new TextComponent("");
-        message.addExtra(ChatColor.GRAY+getTime(time)+" ago: "+ChatColor.RESET);
+        message.addExtra(ChatColor.GRAY+" "+getTime(time)+" ago: "+ChatColor.RESET);
         TextComponent damager = new TextComponent(attacker.name);
         damager.setColor(ChatColor.RED.asBungee());
         String damagerLore = "Находился на "+(int)attacker.location.getX()+" "+(int)attacker.location.getY()+" "+(int)attacker.location.getZ();
