@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.hg.combatlog.commands.combatPage;
 import org.hg.combatlog.commands.getCombat;
+import org.hg.combatlog.commands.getCombatCompletion;
 import org.hg.combatlog.events.PVPdamage;
 
 public final class CombatLog extends JavaPlugin implements Listener{
@@ -26,8 +27,9 @@ public final class CombatLog extends JavaPlugin implements Listener{
         // Plugin startup logic
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new PVPdamage(this), this);
-        Objects.requireNonNull(getCommand("get_combat")).setExecutor(new getCombat(this));
-        Objects.requireNonNull(getCommand("combat_page")).setExecutor(new combatPage(this));
+        getCommand("get_combat").setExecutor(new getCombat(this));
+        getCommand("get_combat").setTabCompleter(new getCombatCompletion(this));
+        getCommand("combat_page").setExecutor(new combatPage(this));
         log = new database(this);
     }
     public static class historyCommand{

@@ -55,7 +55,6 @@ public class getCombat implements CommandExecutor {
             commandSender.sendMessage(ChatColor.RED+"Меньше время укажи!");
             return true;
         }
-//        commandSender.sendMessage(ChatColor.AQUA+""+ChatColor.BOLD+"╔═════════Yog-Sothoth═════════╗");
         List<TextComponent> messages = forDisplay.getLastCombat((Player) commandSender, plugin, time);
         double size = messages.size();
         size = size/10;
@@ -69,7 +68,7 @@ public class getCombat implements CommandExecutor {
                 commandSender.sendMessage(message);
             }
         }
-        /// ... здесь список должен быть
+
         return true;
     }
 
