@@ -51,7 +51,7 @@ public class database {
             this.time = time;
             this.victim = victim;
             this.attacker = attacker;
-            this.damage = ((int) (damage*100))/100;
+            this.damage = (((int) (damage*100))/100)/2;
         }
     }
 
@@ -100,6 +100,43 @@ public class database {
         }
 
         return combatLines;
+    }
+    public final class rawData{
+        public long time;
+        public decompressedPlayer victim;
+        public decompressedPlayer attacker;
+        public double damage;
+        public rawData(long time, decompressedPlayer victim, decompressedPlayer attacker, double damage){
+            this.time = time;
+            this.attacker = attacker;
+            this.victim = victim;
+            this.damage = damage;
+        }
+    }
+    public List<rawData> getRawLinesLastSeconds(int seconds){
+        List<rawData> data = new ArrayList<>();
+        long currentTime = System.currentTimeMillis();
+        long timeThreshold = currentTime - (seconds * 1000);
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM combat WHERE time >= ?");
+            statement.setLong(1, timeThreshold);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                long time = resultSet.getLong("time");
+                decompressedPlayer victim = compPlayerToDecompressed(resultSet.getObject("victim"));
+                decompressedPlayer attacker = compPlayerToDecompressed(resultSet.getObject("attacker"));
+                double damage = resultSet.getDouble("damage");
+//                CombatLine line = new CombatLine(time, victim, attacker, damage);
+                data.add(0, new rawData(time, victim, attacker, damage));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
     public List<CombatLine> getLinesLastSecondsWithRadiusVictim(int seconds, Location location, double radius) {
         List<CombatLine> combatLines = new ArrayList<>();

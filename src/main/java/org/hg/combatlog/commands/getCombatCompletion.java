@@ -45,7 +45,7 @@ public class getCombatCompletion implements TabCompleter {
             }
             else if (arg.contains("attacking:") || arg.contains("a:")||arg.contains("v:") || arg.contains("victim:")){
                 for (Player player: Bukkit.getOnlinePlayers()){
-                    list.add(arg+player.getName());
+                    list.add(arg.split(":")[0]+":"+player.getName());
                 }
             }
             else if (arg.contains("r:")||arg.contains("radius:")){

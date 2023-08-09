@@ -23,7 +23,7 @@ import org.hg.combatlog.CombatLog;
 import org.jetbrains.annotations.NotNull;
 import org.hg.combatlog.*;
 import org.hg.combatlog.PlayerSerializer.*;
-
+import java.util.Collections;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +40,9 @@ public class getCombat implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         int time = -1;
+        int radius = 10;
+        String victim = null;
+        String attacker = null;
         for (String str: strings){
             if (str.contains("time:") || str.contains("t:")){
                 try {
@@ -50,18 +53,41 @@ public class getCombat implements CommandExecutor {
                     return true;
                 }
             }
+            else if (str.contains("r:") || str.contains("radius:")){
+                try {
+                    radius = Integer.parseInt(str.replace("r:", "").replace("radius:", ""));
+                }
+                catch (Exception e){
+                    commandSender.sendMessage("Укажите нормальный радиус!");
+                    return true;
+                }
+                if (radius > 60){
+                    commandSender.sendMessage("Меньше радиус сделай!");
+                    return true;
+                }
+            }
+            else if (str.contains("attacking:") || str.contains("a:")){
+                attacker = str.replace("attacking:", "").replace("a:", "");
+            } else if (str.contains("v:") || str.contains("victim:")) {
+                victim = str.replace("victim:", "").replace("v:", "");
+            }
         }
         if (time > 604800){
             commandSender.sendMessage(ChatColor.RED+"Меньше время укажи!");
             return true;
         }
-        List<TextComponent> messages = forDisplay.getLastCombat((Player) commandSender, plugin, time);
+        List<TextComponent> messages = forDisplay.getLastCombat((Player) commandSender, plugin, time, radius, attacker, victim);
         double size = messages.size();
+        if (size <= 0){
+            commandSender.sendMessage(ChatColor.RED+"Ничего не найдено!");
+            return true;
+        }
         size = size/10;
         size = Math.ceil(size);
         if (messages.size() > 10) {
             messages.removeAll(messages.subList(11, messages.size()));
         }
+        Collections.reverse(messages);
         new decorationMessageLog(messages, 1, (int) size);
         if (time > 0){
             for (TextComponent message: messages) {

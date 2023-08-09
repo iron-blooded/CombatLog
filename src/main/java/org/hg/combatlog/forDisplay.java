@@ -22,38 +22,60 @@ import java.util.Map;
 import org.hg.combatlog.CombatLog.historyCommand;
 
 public class forDisplay {
-    public static List<TextComponent> getLastCombat(Player player, CombatLog plugin ,int time){
+    public static List<TextComponent> getLastCombat(Player sender, CombatLog plugin, int time, int radius, String attacker, String victim){
         List<TextComponent> messages = new ArrayList<>();
+        for (database.rawData data:plugin.log.getRawLinesLastSeconds(time)){
+            try {
+                if ((data.victim.location.distance(sender.getLocation()) <= radius || data.attacker.location.distance(sender.getLocation()) <= radius)
+                        && (attacker == null || data.attacker.name.equals(attacker))
+                        && (victim == null || data.victim.name.equals(victim))) {
+                    messages.add(forDisplay.generateLine(data.time, data.victim, data.attacker, data.damage));
+                }
+            }
+            catch (Exception e){
+
+            }
+        }
+        /*
         for (database.CombatLine log: plugin.log.getLinesLastSeconds(time)){
             messages.add(forDisplay.generateLine(log.time, log.victim, log.attacker, log.damage));
         }
-        new historyCommand().add(player.getName(), messages);
-//        if (messages.size() > 10) {
-//            messages.removeAll(messages.subList(11, messages.size()));
-//        }
+         */
+        new historyCommand().add(sender.getName(), messages);
         return messages;
     }
     private static TextComponent generateLine(long time, PlayerSerializer.decompressedPlayer victim, PlayerSerializer.decompressedPlayer attacker, double damage){
+        damage = ((int) (damage*100))/100;
         TextComponent message = new TextComponent("");
         message.addExtra(ChatColor.GRAY+" "+getTime(time)+" ago: "+ChatColor.RESET);
         TextComponent damager = new TextComponent(attacker.name);
         damager.setColor(ChatColor.RED.asBungee());
-        String damagerLore = "Находился на "+(int)attacker.location.getX()+" "+(int)attacker.location.getY()+" "+(int)attacker.location.getZ();
+        String damagerLore = "Атакующий\nНаходился на "+(int)attacker.location.getX()+" "+(int)attacker.location.getY()+" "+(int)attacker.location.getZ();
         damager.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(damagerLore)));
         damager.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, locationToTpCommand(attacker.location)));
         message.addExtra(damager);
-        TextComponent weapon = new TextComponent(" 🗡 ");
+        TextComponent weapon = new TextComponent(" ⚔ ");
+        if (attacker.weapon != null) {
+            if (attacker.weapon.getType() == Material.BOW || attacker.weapon.getType() == Material.CROSSBOW) {
+                weapon.setText(" \uD83C\uDFF9 ");
+            } else if (attacker.weapon.getType() == Material.TRIDENT) {
+                weapon.setText(" \uD83D\uDD31 ");
+            } else if (attacker.weapon.getType().name().contains("_AXE")) {
+                weapon.setText(" \uD83E\uDE93 ");
+            } else if (attacker.weapon.getType().name().contains("_SWORD")){
+                weapon.setText(" 🗡 ");
+            }
+        }
         weapon.setColor(ChatColor.YELLOW.asBungee());
         weapon.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getDisplayWeapon(attacker.weapon)));
         message.addExtra(weapon);
         TextComponent attacked = new TextComponent(victim.name);
         attacked.setColor(ChatColor.GREEN.asBungee());
-        String victimLore = "Находился на "+(int)victim.location.getX()+" "+(int)victim.location.getY()+" "+(int)victim.location.getZ();
+        String victimLore = "Жертва\nНаходился на "+(int)victim.location.getX()+" "+(int)victim.location.getY()+" "+(int)victim.location.getZ();
         attacked.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(victimLore)));
         attacked.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, locationToTpCommand(victim.location)));
         message.addExtra(attacked);
         message.addExtra(ChatColor.AQUA+ " -"+damage+"❤");
-        message.addExtra(".");
         return message;
     }
     private static void addLine(TextComponent properties, String text){
