@@ -61,10 +61,10 @@ public class getCombat implements CommandExecutor {
                     commandSender.sendMessage("Укажите нормальный радиус!");
                     return true;
                 }
-                if (radius > 60){
-                    commandSender.sendMessage("Меньше радиус сделай!");
-                    return true;
-                }
+//                if (radius > 60){
+//                    commandSender.sendMessage("Меньше радиус сделай!");
+//                    return true;
+//                }
             }
             else if (str.contains("attacking:") || str.contains("a:")){
                 attacker = str.replace("attacking:", "").replace("a:", "");
