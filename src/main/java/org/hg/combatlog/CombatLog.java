@@ -27,8 +27,8 @@ public final class CombatLog extends JavaPlugin implements Listener{
         // Plugin startup logic
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new PVPdamage(this), this);
-        getCommand("get_combat").setExecutor(new getCombat(this));
-        getCommand("get_combat").setTabCompleter(new getCombatCompletion(this));
+        getCommand("combat").setExecutor(new getCombat(this));
+        getCommand("combat").setTabCompleter(new getCombatCompletion(this));
         getCommand("combat_page").setExecutor(new combatPage(this));
         log = new database(this);
     }

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class getCombatCompletion implements TabCompleter {
@@ -20,8 +21,63 @@ public class getCombatCompletion implements TabCompleter {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command syka, @NotNull String alias, @NotNull String[] args) {
         List<String> list = new ArrayList<>();
+        if (args.length <= 0){
+            return list;
+        }
+        int i = args.length-2;
+        if (args.length % 2 != 0){
+            if (!Arrays.asList(args).contains("time:")) {
+                list.add("time:");
+            }
+            if (!Arrays.asList(args).contains("radius:")) {
+                list.add("radius:");
+            }
+            if (!Arrays.asList(args).contains("attacking:")) {
+                list.add("attacking:");
+            }
+            if (!Arrays.asList(args).contains("victim:")) {
+                list.add("victim:");
+            }
+        }
+        else {
+            String command = args[i];
+            String arg = args[i + 1];
+            if (command.contains("time:") || command.contains("t:")){
+                try {
+                    if (Integer.parseInt(arg)>=0){
+                        list.add(arg + "s");
+                        list.add(arg + "m");
+                        list.add(arg + "h");
+                        list.add(arg + "d");
+                        list.add(arg + "w");
+                    }
+                }
+                catch (Exception e){
+                    if (arg.equals("")) {
+                        for (int i1 = 0; i1 <= 9; i1++) {
+                            list.add("" + i1);
+                        }
+                    }
+                    else {
+                        list.add(arg);
+                    }
+                }
+            }
+            else if (command.contains("attacking:") || command.contains("a:")||command.contains("v:") || command.contains("victim:")){
+                for (Player player: Bukkit.getOnlinePlayers()){
+                    list.add(player.getName());
+                }
+            }
+            else if (command.contains("r:")||command.contains("radius:")){
+                for (int i1 = 0; i1 <= 9; i1++){
+                    list.add(""+i1);
+                }
+            }
+        }
+        return list;
+        /*
         String arg = args[args.length-1];
         if (arg.contains(":")){
             if (arg.contains("time:") || arg.contains("t:")){
@@ -65,5 +121,6 @@ public class getCombatCompletion implements TabCompleter {
             list.add("v:");
         }
         return list;
+         */
     }
 }

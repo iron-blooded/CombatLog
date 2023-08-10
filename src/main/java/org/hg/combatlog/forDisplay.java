@@ -46,6 +46,7 @@ public class forDisplay {
     }
     private static TextComponent generateLine(long time, PlayerSerializer.decompressedPlayer victim, PlayerSerializer.decompressedPlayer attacker, double damage){
         damage = ((int) (damage*100))/100;
+        damage = damage/2;
         TextComponent message = new TextComponent("");
         message.addExtra(ChatColor.GRAY+" "+getTime(time)+" ago: "+ChatColor.RESET);
         TextComponent damager = new TextComponent(attacker.name);

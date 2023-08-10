@@ -4,7 +4,7 @@ main: org.hg.combatlog.CombatLog
 api-version: 1.18
 description: Filabdict
 commands:
-  get_combat:
+  combat:
     description: Получить лог урона
     permission: combat_log
   combat_page:

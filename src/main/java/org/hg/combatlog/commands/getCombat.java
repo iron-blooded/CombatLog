@@ -38,38 +38,40 @@ public class getCombat implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        int time = -1;
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command syka, @NotNull String s, @NotNull String[] strings) {
+        int time = 60*2;
         int radius = 10;
         String victim = null;
         String attacker = null;
-        for (String str: strings){
-            if (str.contains("time:") || str.contains("t:")){
+        for (int i = 0; i < strings.length; i+=2){
+            String command = strings[i];
+            String arg = "";
+            try {
+                arg = strings[i + 1];
+            } catch (Exception e){
+                commandSender.sendMessage(ChatColor.RED+ "Вы забыли указать аргумент к "+command);
+                return true;
+            }
+            if (command.equals("time:")||command.equals("t:")){
                 try {
-                    time = (int) forDisplay.parseTime(str.replace("time:", "").replace("t:", ""));
-                }
-                catch (Exception e){
-                    commandSender.sendMessage("Укажите нормальное время!");
+                    time = (int) forDisplay.parseTime(arg);
+                } catch (Exception e){
+                    commandSender.sendMessage(ChatColor.RED+"Укажите нормальное время!");
                     return true;
                 }
             }
-            else if (str.contains("r:") || str.contains("radius:")){
+            else if (command.equals("radius:")||command.equals("r:")) {
                 try {
-                    radius = Integer.parseInt(str.replace("r:", "").replace("radius:", ""));
-                }
-                catch (Exception e){
-                    commandSender.sendMessage("Укажите нормальный радиус!");
+                    radius = Integer.parseInt(arg);
+                } catch (Exception e){
+                    commandSender.sendMessage(ChatColor.RED+"Укажите нормальный радиус!");
                     return true;
                 }
-//                if (radius > 60){
-//                    commandSender.sendMessage("Меньше радиус сделай!");
-//                    return true;
-//                }
             }
-            else if (str.contains("attacking:") || str.contains("a:")){
-                attacker = str.replace("attacking:", "").replace("a:", "");
-            } else if (str.contains("v:") || str.contains("victim:")) {
-                victim = str.replace("victim:", "").replace("v:", "");
+            else if (command.equals("attacking:") || command.equals("r:")) {
+                attacker = arg;
+            } else if (command.equals("v:") || command.equals("victim:")) {
+                victim = arg;
             }
         }
         if (time > 604800){

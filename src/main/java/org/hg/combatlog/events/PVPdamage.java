@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -21,8 +22,11 @@ public class PVPdamage implements Listener {
     public PVPdamage(CombatLog plugin){
         PVPdamage.plugin = plugin;
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()){
+            return;
+        }
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             if (!event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)){
                 return;
@@ -33,8 +37,11 @@ public class PVPdamage implements Listener {
             plugin.log.addLine(victim, attacker, damage);
         }
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onArrowHit(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()){
+            return;
+        }
         Entity damager = event.getDamager();
         Entity target = event.getEntity();
         // Проверяем, что нанесен урон из лука

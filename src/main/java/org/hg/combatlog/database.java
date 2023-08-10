@@ -51,7 +51,8 @@ public class database {
             this.time = time;
             this.victim = victim;
             this.attacker = attacker;
-            this.damage = (((int) (damage*100))/100)/2;
+            this.damage = ((int) (damage*100))/100;
+            this.damage = this.damage / 2;
         }
     }
 
