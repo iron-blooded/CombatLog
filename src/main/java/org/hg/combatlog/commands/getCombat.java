@@ -74,10 +74,6 @@ public class getCombat implements CommandExecutor {
                 victim = arg;
             }
         }
-        if (time > 604800){
-            commandSender.sendMessage(ChatColor.RED+"Меньше время укажи!");
-            return true;
-        }
         List<TextComponent> messages = forDisplay.getLastCombat((Player) commandSender, plugin, time, radius, attacker, victim);
         double size = messages.size();
         if (size <= 0){
