@@ -23,13 +23,14 @@ import java.util.Map;
 
 public class PlayerSerializer {
     public static String compressedPlayer(Player player) {
+        return compressedPlayer(player.getName(), player.getLocation(), player.getInventory().getItemInMainHand());
+    }
+    public static String compressedPlayer(String name, Location location, ItemStack itemStack) {
         Map<String, Object> playerData = new HashMap<>();
-
-        // Сохраняем данные игрока
-        playerData.put("name", player.getName());
-        playerData.put("location", player.getLocation().serialize());
+        playerData.put("name", name);
+        playerData.put("location", location.serialize());
         ItemStack[] weapon = new ItemStack[54];
-        weapon[0] = player.getInventory().getItemInMainHand();
+        weapon[0] = itemStack;
         playerData.put("weapon", serializeItems(weapon));
         Gson gson = new Gson();
         return gson.toJson(playerData);
