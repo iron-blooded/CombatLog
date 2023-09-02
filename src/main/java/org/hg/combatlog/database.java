@@ -55,14 +55,16 @@ public class database {
             this.damage = this.damage / 2;
         }
     }
-
     public void addLine(Player victim, Player attacker, double damage) {
+        addLine(PlayerSerializer.compressedPlayer(victim), PlayerSerializer.compressedPlayer(attacker), damage);
+    }
+    public void addLine(String victim_serialized, String attacker_serialized, double damage) {
         long time = System.currentTimeMillis();
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO combat (time, victim, attacker, damage) VALUES (?, ?, ?, ?)");
             statement.setLong(1, time);
-            statement.setObject(2, PlayerSerializer.compressedPlayer(victim));
-            statement.setObject(3, PlayerSerializer.compressedPlayer(attacker));
+            statement.setObject(2, victim_serialized);
+            statement.setObject(3, attacker_serialized);
             statement.setObject(4, damage);
             statement.executeUpdate();
             statement.close();
