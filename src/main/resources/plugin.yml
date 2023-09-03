@@ -9,3 +9,4 @@ commands:
     permission: combat_log
   combat_page:
     description: Перелестнуть на страницу
+    permission: combat_log
