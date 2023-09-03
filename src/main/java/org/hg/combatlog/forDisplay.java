@@ -76,7 +76,14 @@ public class forDisplay {
         attacked.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(victimLore)));
         attacked.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, locationToTpCommand(victim.location)));
         message.addExtra(attacked);
-        message.addExtra(ChatColor.AQUA+ " -"+damage+"❤");
+        String space = " ";
+        if (damage < 0){
+            space = " +";
+            damage *= -1;
+        } else if (damage > 0) {
+            space = " -";
+        }
+        message.addExtra(ChatColor.AQUA+ space+damage+"❤");
         return message;
     }
     private static void addLine(TextComponent properties, String text){
