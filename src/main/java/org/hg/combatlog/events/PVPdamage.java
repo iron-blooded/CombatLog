@@ -45,12 +45,20 @@ public class PVPdamage implements Listener {
             if (!event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
                 return;
             }
+            String id_victim = "#";
+            String id_attacker = "#";
+            if (event.getEntity() instanceof Player){
+                id_victim = "";
+            }
+            if (event.getDamager() instanceof Player){
+                id_attacker = "";
+            }
             LivingEntity victim = (LivingEntity) event.getEntity();
             LivingEntity attacker = (LivingEntity) event.getDamager();
             double damage = event.getFinalDamage();
             plugin.log.addLine(
-                    PlayerSerializer.compressedPlayer(victim.getName(), victim.getLocation(), victim.getEquipment().getItemInMainHand()),
-                    PlayerSerializer.compressedPlayer(attacker.getName(), attacker.getLocation(), attacker.getEquipment().getItemInMainHand()),
+                    PlayerSerializer.compressedPlayer(id_victim +victim.getName(), victim.getLocation(), victim.getEquipment().getItemInMainHand()),
+                    PlayerSerializer.compressedPlayer(id_attacker+attacker.getName(), attacker.getLocation(), attacker.getEquipment().getItemInMainHand()),
                     damage
             );
         }
