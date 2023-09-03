@@ -16,30 +16,49 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.hg.combatlog.CombatLog;
+import org.hg.combatlog.PlayerSerializer;
 
 public class PVPdamage implements Listener {
     private static CombatLog plugin;
-    public PVPdamage(CombatLog plugin){
+
+    public PVPdamage(CombatLog plugin) {
         PVPdamage.plugin = plugin;
     }
+
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.isCancelled()){
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.isCancelled() || event.getEntity().getType() != EntityType.PLAYER || !(event.getEntity() instanceof Player)) {
             return;
         }
-        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-            if (!event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)){
-                return;
-            }
-            Player victim = (Player) event.getEntity();
-            Player attacker = (Player) event.getDamager();
-            double damage = event.getFinalDamage();
-            plugin.log.addLine(victim, attacker, damage);
+        Player victim = (Player) event.getEntity();
+        if (!event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) && !event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
+            plugin.log.addLine(PlayerSerializer.compressedPlayer(victim), PlayerSerializer.compressedPlayer("#" + event.getCause().name().toLowerCase(), victim .getLocation(), new ItemStack(Material.AIR)), event.getFinalDamage());
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.getEntity() instanceof LivingEntity && event.getDamager() instanceof LivingEntity) {
+            if (!event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
+                return;
+            }
+            LivingEntity victim = (LivingEntity) event.getEntity();
+            LivingEntity attacker = (LivingEntity) event.getDamager();
+            double damage = event.getFinalDamage();
+            plugin.log.addLine(
+                    PlayerSerializer.compressedPlayer(victim.getName(), victim.getLocation(), victim.getEquipment().getItemInMainHand()),
+                    PlayerSerializer.compressedPlayer(attacker.getName(), attacker.getLocation(), attacker.getEquipment().getItemInMainHand()),
+                    damage
+            );
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onArrowHit(EntityDamageByEntityEvent event) {
-        if (event.isCancelled()){
+        if (event.isCancelled()) {
             return;
         }
         Entity damager = event.getDamager();
@@ -59,7 +78,6 @@ public class PVPdamage implements Listener {
             Player victim = (Player) target;
             double damage = event.getFinalDamage();
             plugin.log.addLine(victim, ((Player) arrow.getShooter()).getPlayer(), damage);
-            return;
         } else if (damager instanceof Trident) {
             Trident trident = (Trident) damager;
             if (!(trident.getShooter() instanceof Player)) {
@@ -72,7 +90,6 @@ public class PVPdamage implements Listener {
             Player victim = (Player) target;
             double damage = event.getFinalDamage();
             plugin.log.addLine(victim, ((Player) trident.getShooter()).getPlayer(), damage);
-            return;
         }
     }
 
